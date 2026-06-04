@@ -67,7 +67,7 @@ Typed text is rendered on screen and read aloud through an offline text-to-speec
 ### Run from Source
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/optilink.git
+git clone https://github.com/nayathmanchanda-ui/optilink.git
 cd optilink
 pip install mediapipe opencv-python pyttsx3
 python main.py
