@@ -1,0 +1,8 @@
+opencv-python
+numpy
+mediapipe
+cvzone
+pyttsx3
+pyautogui
+sounddevice
+pyinstaller
