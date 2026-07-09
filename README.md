@@ -1,95 +1,85 @@
-# OptiLink — Hands-Free Gaze-Controlled Typing System
+# OptiLink
 
-OptiLink is a hands-free virtual keyboard for Windows, controlled entirely through eye movement and blink detection. Designed for individuals with motor disabilities, it requires no specialized hardware — only a standard webcam.
+**Hands-Free Gaze-Controlled Typing System**
 
----
+OptiLink is a fully hands-free virtual keyboard controlled entirely by eye movement and blinks, using nothing more than a standard webcam. It's built for people with motor disabilities — ALS, cerebral palsy, spinal cord injuries, upper limb paralysis — who cannot use a traditional keyboard, as a low-cost alternative to dedicated eye-gaze communication devices, which often run from several thousand to tens of thousands of dollars.
 
-## Background
+> No hands. No touch. Just vision.
 
-Millions of people living with ALS, cerebral palsy, spinal cord injuries, or upper limb disabilities are unable to use conventional input devices. Existing assistive communication solutions are often prohibitively expensive ($5,000–$30,000+), hardware-dependent, and inaccessible to most users globally. OptiLink was built to address this gap — providing a free, accessible alternative that works on any standard PC.
-
----
-
-## How It Works
-
-OptiLink uses Google's MediaPipe Face Mesh to track 468 facial landmarks in real time at 60 FPS. Iris position is used to estimate gaze direction, which controls a highlight cursor across the on-screen keyboard. Key selection is triggered by blink gestures:
-
-- **Long blink** — select the highlighted key
-- **Double blink** — backspace / delete
-- **Auto-calibrated threshold** — blink sensitivity is personalized during an initial calibration step before use
-
-Typed text is rendered on screen and read aloud through an offline text-to-speech engine.
-
----
+Live project page: https://opti-link.vercel.app/
 
 ## Features
 
-| Feature | Details |
+| Feature | Description |
 |---|---|
-| Gaze-Controlled Navigation | Iris tracking via MediaPipe Face Mesh at 60 FPS |
-| Blink-to-Select Input | Long blink to select, double blink for backspace |
-| Auto-Calibration | Blink threshold personalized per user on startup |
-| Text-to-Speech | Offline voice output via pyttsx3 |
-| Audio Feedback | Keypress confirmation sounds on every selection |
-| Full Keyboard Layout | All letters, numbers, symbols, space, clear, and speak controls |
-| Offline Operation | Fully functional without internet after first run |
-| Single Executable | Ships as a standalone .exe — no installation required |
+| Eye-Controlled | Navigate keys by looking left or right |
+| Webcam Only | No special hardware — works on any PC with a camera |
+| Blink Detection | Long blink selects a key, double blink backspaces |
+| Auto-Calibration | Blink threshold auto-tunes to your eyes in ~3 seconds |
+| Text-to-Speech | Typed text is read aloud, both on demand and when you close the app |
+| Quick Phrases | One-look access to common needs: YES, NO, HELP, WATER, PAIN, FOOD, CATH |
+| Audio Feedback | Distinct tones confirm scrolling vs. key selection |
+| Single .exe | Packaged as one executable — no setup for the end user |
 
----
+## How It Works
 
-## Technology Stack
+1. **Capture** — OpenCV reads webcam frames in real time
+2. **Face & Iris Tracking** — MediaPipe's Face Landmarker tracks 468 facial landmarks, including iris position, per frame
+3. **Gaze Direction** — Iris position relative to the eye corners is converted into a left / right / center signal
+4. **Blink Detection** — Eye Aspect Ratio (EAR) is monitored; a sustained low EAR triggers a long blink (select), two in quick succession trigger a double blink (backspace)
+5. **Keyboard Navigation** — The on-screen keyboard scrolls through letters, controls, and quick-phrase keys based on gaze direction, and confirms a selection on a long blink
+6. **Speech Output** — Typed text can be spoken at any time via the SPEAK key, and is automatically read aloud when the session ends
 
-| Library | Purpose |
-|---|---|
-| Python | Core application logic |
-| MediaPipe | Real-time face mesh and iris landmark detection |
-| OpenCV | Webcam capture and image processing |
-| Tkinter | Virtual keyboard GUI |
-| pyttsx3 | Offline text-to-speech output |
-| PyInstaller | Compiles the application into a single .exe |
+## Tech Stack
 
----
+- **Python** — core application logic
+- **MediaPipe** — real-time face mesh and iris landmark tracking
+- **OpenCV** — webcam capture and frame processing
+- **Tkinter** — the on-screen keyboard and launcher UI
+- **pyttsx3** — offline text-to-speech
+- **PyAutoGUI** — system-level key press simulation
+- **sounddevice / winsound** — audio feedback tones
+- **PyInstaller** — compiles the app into a single `.exe`
 
-## Comparison with Existing Solutions
-
-| | Traditional Assistive Devices | OptiLink |
-|---|---|---|
-| Cost | $5,000 – $30,000+ | Free |
-| Hardware Required | Specialized equipment | Standard webcam |
-| Portability | Fixed, bulky setup | Any Windows PC |
-| Setup | Complex, technical | Single .exe, one click |
-| Internet Dependency | Often cloud-reliant | Fully offline |
-
----
-
-## Getting Started
-
-### Run from Source
+## Installation
 
 ```bash
-git clone https://github.com/nayathmanchanda-ui/optilink.git
-cd optilink
-pip install mediapipe opencv-python pyttsx3
+git clone https://github.com/nayathmanchanda-ui/OptiLink.git
+cd OptiLink
+pip install -r requirements.txt
 python main.py
 ```
 
-### Download Executable
+On first run, OptiLink automatically downloads the MediaPipe face landmarker model (~4 MB). **An internet connection is required for this first run only** — after that, OptiLink runs fully offline.
 
-A pre-built Windows executable is available at [gazekeyboard.vercel.app](https://gazekeyboard.vercel.app). No installation required — download and run.
+## Usage
 
----
+- Look **left** or **right** to scroll through keys
+- Hold a **long blink** to select the highlighted key
+- **Double blink** to backspace
+- Look to the **SPEAK** key and long-blink to hear your typed text aloud
+- Press **Esc** at any time to exit — your typed text will be read back automatically when the app closes
 
-## System Requirements
+## Building a Standalone Executable
 
-| | Minimum |
-|---|---|
-| OS | Windows 10 (64-bit) |
-| Webcam | Any standard built-in or USB webcam |
-| RAM | 4 GB |
-| Internet | Required on first run only |
+```bash
+pyinstaller --onefile --add-data "face_landmarker.task;." main.py
+```
 
----
+## How This Differs From Existing Tools
 
-## Links
+Free, open-source gaze-typing tools already exist — most notably [OptiKey](https://github.com/OptiKey/OptiKey), which pairs an on-screen keyboard with speech output. The key difference: OptiKey is designed around a dedicated IR eye-tracker (e.g. a Tobii 4C, ~$150 of hardware). OptiLink instead runs entirely on a standard webcam via MediaPipe's face and iris tracking — no dedicated eye-tracking hardware required at all.
 
-- Website: [gazekeyboard.vercel.app](https://gazekeyboard.vercel.app)
+## Project Status / Known Limitations
+
+- Gaze navigation currently supports left/right scrolling only; vertical (up/down) gaze tracking is detected internally but not yet wired into navigation — a planned improvement for full 2D cursor control
+- Requires a reasonably well-lit environment for reliable iris tracking
+- Tested on Windows; cross-platform audio feedback falls back to a terminal beep on Linux
+
+## Team
+
+Built during a robotics internship by Nayath Manchanda, Yana kalra and Bhavyaa.
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
